@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Games — Simple List</title>
+  <style>
+    :root {
+      --bg: #0f1221;
+      --panel: #161a2f;
+      --text: #e6e8f2;
+      --muted: #aab1d1;
+      --accent: #6ea8fe;
+      --accent-2: #8e9bff;
+      --row: #13172a;
+      --row-alt: #171b32;
+      --row-hover: #20264a;
+      --border: #232848;
+      --chip: #232a4f;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 10% -10%, #233 0%, #111 50%, #0d1020 100%), var(--bg);
+      color: var(--text);
+    }
+  .page { width: 80%; max-width: none; margin: 0 auto; padding: 32px 20px 56px; }
+    header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+    .logo { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: grid; place-items: center; color: white; font-weight: 800; box-shadow: 0 8px 24px rgba(110,168,254,.35); user-select: none; }
+    h1 { font-size: 20px; margin: 0; letter-spacing: .3px; }
+    .muted { color: var(--muted); font-size: 13px; }
+
+    .panel { background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0)); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,.35); }
+    .toolbar { display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid var(--border); background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0)); }
+    .search { flex:1; background:#0e1230; border:1px solid var(--border); color:var(--text); padding:10px 12px; border-radius:10px; outline:none; }
+    .chip { background:var(--chip); border:1px solid var(--border); color:var(--muted); font-size:12px; padding:6px 10px; border-radius:999px; white-space:nowrap; }
+
+    table { width:100%; border-collapse:collapse; }
+    thead th { text-align:left; font-weight:600; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); padding:12px 14px; background:#0f1430; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:2; }
+  tbody tr { background:var(--row); border-bottom:1px solid var(--border); }
+    tbody tr:nth-child(even) { background:var(--row-alt); }
+    tbody tr[data-url] { cursor:pointer; }
+    tbody tr[data-url]:hover { background:var(--row-hover); }
+  td { padding:16px 18px; vertical-align:middle; }
+    .title { font-weight:600; color:#f3f5ff; }
+  td.title { display:flex; align-items:center; gap:16px; }
+  .title .ttext { display:inline-block; }
+  /* Horizontal cover preview: 2:1 ratio (w:h), made wider and taller */
+  .cover { width:160px; height:80px; border-radius:12px; object-fit:cover; background:#14183a; border:1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,.25); flex:0 0 160px; }
+  .cover-preview {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    padding: 6px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0));
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    transform-origin: top left;
+    transition: opacity .12s ease, transform .12s ease;
+    opacity: 0;
+    transform: scale(.98);
+  }
+  .cover-preview img {
+    display: block;
+    /* Much larger preview: roughly 2–3x bigger, but responsive */
+    max-width: min(70vw, 1200px);
+    max-height: min(70vh, 800px);
+    width: auto;
+    height: auto;
+    border-radius: 8px;
+  }
+    .title .ext { display:inline-flex; align-items:center; gap:6px; margin-left:8px; color:var(--accent); opacity:.85; text-decoration:none; }
+    .title .ext:hover { opacity:1; }
+    .title .ext svg { width:14px; height:14px; display:inline-block; fill:currentColor; }
+    .author { color:var(--muted); }
+    /* Version column cell */
+    td.version { text-align:center; }
+    /* Pill badge for version value */
+    .version .badge {
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: .02em;
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 6px 18px rgba(110,168,254,.25);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    .empty { color:var(--muted); }
+    .footer { padding:14px 16px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:12px; }
+
+    @media (max-width: 720px) {
+      thead { display:none; }
+      table, tbody, tr, td { display:block; width:100%; }
+      tbody tr { margin:10px 10px; border-radius:12px; overflow:hidden; }
+      td { border-bottom:1px solid var(--border); }
+      td:last-child { border-bottom:0; }
+      td[data-label]:before { content: attr(data-label); display:block; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:4px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="logo" aria-hidden="true">G</div>
+      <div>
+        <h1>Games catalog</h1>
+        <div class="muted">Click any row to open the game's page in a new tab</div>
+      </div>
+    </header>
+
+    <div class="panel">
+      <div class="toolbar">
+        <input id="q" class="search" type="search" placeholder="Search by game or author..." aria-label="Search" />
+        <span class="chip" id="visibleCount">0 visible</span>
+      </div>
+
+      <div style="max-height: 72vh; overflow: auto;">
+        <table id="gamesTable" role="table" aria-label="Games">
+          <thead>
+            <tr>
+              <th style="width: 52%">Game</th>
+              <th style="width: 28%">Author</th>
+              <th style="width: 20%">Version</th>
+            </tr>
+          </thead>
+          <tbody id="gamesBody">
+            <tr><td colspan="3" class="empty">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="footer">
+        <span id="totalCount">0 total</span>
+      </div>
+    </div>
+  </div>
+
+  <script type="application/json" id="games-data">[
+    {
+      "title": "Desert Stalker",
+      "author": "Zetan",
+      "url": "https://f95zone.to/threads/desert-stalker-v0-19-2-zetan.68105",
+      "cover_url": "https://attachments.f95zone.to/2025/09/5263889_banner.png",
+      "version": "v0.19.4"
+    },
+    {
+      "title": "Hail Dicktator",
+      "author": "Hachigames",
+      "url": "https://f95zone.to/threads/hail-dicktator-v0-67-0-hachigames.51437/",
+      "cover_url": "https://attachments.f95zone.to/2021/02/1044036_712525_title-screen_broad.jpg",
+      "version": "v0.67.0"
+    },
+    {
+      "title": "Move the Chains",
+      "author": "MissFortune",
+      "url": "https://f95zone.to/threads/move-the-chains-v0-2-bugfix-missfortune.167178/",
+      "cover_url": "https://attachments.f95zone.to/2023/07/2791743_F95_BannerCA1.png",
+      "version": "v0.3"
+    },
+    {
+      "title": "16 Years Later",
+      "author": "Wetdreamwalker",
+      "url": "https://f95zone.to/threads/16-years-later-ep-13-wetdreamwalker.90568/",
+      "cover_url": "https://attachments.f95zone.to/2021/08/1362112_1362105_ES0001.jpg",
+      "version": "Episode 15"
+    },
+    {
+      "title": "The Synthetic",
+      "author": "Carbon",
+      "url": "https://f95zone.to/threads/the-synthetic-ep-3-side-story-carbon.181773/",
+      "cover_url": "https://attachments.f95zone.to/2023/11/3111957_1700049103165.png",
+      "version": "EP 6"
+    },
+    {
+      "title": "The Seven Realms",
+      "author": "SeptCloud",
+      "url": "https://f95zone.to/threads/the-seven-realms-r3-v0-01-septcloud.112700/",
+      "cover_url": "https://attachments.f95zone.to/2025/03/4630290_1740910569946.png",
+      "version": "v0.1"
+    },
+    {
+      "title": "Westview Academy",
+      "author": "Tako Yuh",
+      "url": "https://f95zone.to/threads/westview-academy-v0-4-1-tako-yuh.106028/",
+      "cover_url": "https://attachments.f95zone.to/2025/02/4546406_ZoneBanner.png",
+      "version": "v0.6.0"
+    },
+    {
+      "title": "Where Is Love?",
+      "author": "Totally Pure Games",
+      "url": "https://f95zone.to/threads/where-is-love-v0-1-totally-pure-games.212073/",
+      "cover_url": "https://attachments.f95zone.to/2024/06/3754833_F95_Banner_Game.png",
+      "version": "v0.1"
+    },
+    {
+      "title": "ATM Adventures",
+      "author": "SnubbLR",
+      "url": "https://f95zone.to/threads/atm-adventures-v0-4-snubblr.151132/",
+      "cover_url": "https://attachments.f95zone.to/2023/03/2465137_Cover1360340.png",
+      "version": "v0.4"
+    },
+    {
+      "title": "Dreams of Reality",
+      "author": "Cenc",
+      "url": "https://f95zone.to/threads/dreams-of-reality-v0-4-8b-cenc.53556/",
+      "cover_url": "https://attachments.f95zone.to/2024/12/4411699_1735421838618.png",
+      "version": "v0.4.8b"
+    },
+    {
+      "title": "FemCity",
+      "author": "Kiriowo",
+      "url": "https://f95zone.to/threads/femcity-v0-6-0-kiriowo.139627/",
+      "cover_url": "https://attachments.f95zone.to/2022/12/2237348_1670214884262.png",
+      "version": "v0.5"
+    },
+    {
+      "title": "Intertwined",
+      "author": "Nyx",
+      "url": "https://f95zone.to/threads/intertwined-v0-12-3-nyx.53676/",
+      "cover_url": "https://attachments.f95zone.to/2023/07/2764825_intertwined_custom-cover_by_maleficent.png",
+      "version": "v0.10"
+    },
+    {
+      "title": "Midnight Paradise",
+      "author": "Lewdlab",
+      "url": "https://f95zone.to/threads/midnight-paradise-v0-25-elite-lewdlab.25081/",
+      "cover_url": "https://attachments.f95zone.to/2019/12/504286_patreon_cover_2.jpg",
+      "version": "v0.23"
+    },
+    {
+      "title": "My Dorm",
+      "author": "Trope95",
+      "url": "https://f95zone.to/threads/my-dorm-v0-19-1-p2-ch-7-trope95.115549/",
+      "cover_url": "https://attachments.f95zone.to/2024/11/4287843_neweoc.png",
+      "version": "v0.15.1"
+    },
+    {
+      "title": "Nudist College",
+      "author": "Elsa",
+      "url": "https://f95zone.to/threads/nudist-college-v0-20-elsa.106380",
+      "cover_url": "https://attachments.f95zone.to/2022/03/1720943_baaa.png",
+      "version": "v0.15"
+    },
+    {
+      "title": "Savior",
+      "author": "Purple fellas",
+      "url": "https://f95zone.to/threads/savior-v0-16c-purple-fellas.40217/",
+      "cover_url": "https://attachments.f95zone.to/2020/04/641146_640624_Cover2.png",
+      "version": "v0.15B"
+    },
+    {
+      "title": "STWA: Unbroken",
+      "author": "STWAdev",
+      "url": "https://f95zone.to/threads/stwa-unbroken-pt-7-stwadev.85108/",
+      "cover_url": "https://attachments.f95zone.to/2025/01/4443440_UnbrokenBanner_2025_Resize.png",
+      "version": "Pt. 7"
+    },
+    {
+      "title": "WVM",
+      "author": "Braindrop",
+      "url": "https://f95zone.to/threads/wvm-s2-ch-1-ep-13-b3-braindrop.35910/",
+      "cover_url": "https://attachments.f95zone.to/2019/10/457723_457450_cover.png",
+      "version": "v0.1"
+    },
+    {
+      "title": "City of Broken Dreamers",
+      "author": "PhillyGames",
+      "url": "https://f95zone.to/threads/city-of-broken-dreamers-v1-14-0-ch-14-phillygames.25739/",
+      "cover_url": "https://attachments.f95zone.to/2019/02/259069__banner-cobd.jpg",
+      "version": "v1.10.1"
+    },
+    {
+      "title": "Please, Change My Diaper!",
+      "author": "Donkle12",
+      "url": "https://f95zone.to/threads/please-change-my-diaper-v0-40-donkle12.103904/",
+      "cover_url": "https://attachments.f95zone.to/2022/02/1650439_PCMDf95.jpg",
+      "version": "v0.40"
+    },
+    {
+      "title": "Defending Lydia Collier",
+      "author": "White Phantom Games",
+      "url": "https://f95zone.to/threads/defending-lydia-collier-v0-15-8-white-phantom-games.33797/",
+      "cover_url": "https://attachments.f95zone.to/2022/09/2047275_dlc-f95z-b-main.png",
+      "version": "v0.16"
+    },
+    {
+      "title": "Halfway House",
+      "author": "Az",
+      "url": "https://f95zone.to/threads/halfway-house-ep-10-bonus-7-8-az.33607/",
+      "cover_url": "https://attachments.f95zone.to/2019/08/381543_381400_Patreon_Banner2.jpg",
+      "version": "Ep11"
+    },
+    {
+      "title": "Having a HARD Time",
+      "author": "Quadruple-Q",
+      "url": "https://f95zone.to/threads/having-a-hard-time-v0-2-3-quadruple-q.145408/",
+      "cover_url": "https://attachments.f95zone.to/2023/01/2351255_haht_banner_def_1600.png",
+      "version": "v0.3.0"
+    },
+    {
+      "title": "Heart Problems",
+      "author": "Xenorav",
+      "url": "https://f95zone.to/threads/heart-problems-v0-8-final-xenorav.63437/",
+      "cover_url": "https://attachments.f95zone.to/2020/11/904731_aaaaa.jpg",
+      "version": "v0.1"
+    },
+    {
+      "title": "Hillside",
+      "author": "DarkBlue",
+      "url": "https://f95zone.to/threads/hillside-v0-14-1-darkblue.52621/",
+      "cover_url": "https://attachments.f95zone.to/2021/01/993288_992349_Hillside_Banner_2.png",
+      "version": "v0.14.1"
+    },
+    {
+      "title": "Lost at Birth",
+      "author": "V19",
+      "url": "https://f95zone.to/threads/lost-at-birth-ch-9-part-1-v19.111744/",
+      "cover_url": "https://attachments.f95zone.to/2024/09/4064838_qDfsI1.jpg",
+      "version": "v0.9"
+    },
+    {
+      "title": "Personal Assistant: Blackheart Edition",
+      "author": "Blackheart Games",
+      "url": "https://socigames.com/personal-assistant-blackheart-edition-download",
+      "cover_url": "https://socigames.com/wp-content/uploads/2022/06/1-55.jpg",
+      "version": "v0.7"
+    },
+    {
+      "title": "Radiant",
+      "author": "RK Studios",
+      "url": "https://f95zone.to/threads/radiant-v0-5-2-rk-studios.49572/",
+      "cover_url": "https://attachments.f95zone.to/2020/04/626649_Radiant_Taboo_HDR.png",
+      "version": "v0.6.3"
+    },
+    {
+      "title": "Taboo University",
+      "author": "ViNovella Games",
+      "url": "https://f95zone.to/threads/taboo-university-v0-4-17-vinovellagames.112212/",
+      "cover_url": "https://attachments.f95zone.to/2025/09/5302683_Cover.jpg",
+      "version": "v0.5.21"
+    },
+    {
+      "title": "The Grey Dream",
+      "author": "TheGreys",
+      "url": "https://f95zone.to/threads/the-grey-dream-ep-4-thegreys.125324/",
+      "cover_url": "https://attachments.f95zone.to/2023/12/3207745_Cover.jpg",
+      "version": "5"
+    },
+    {
+      "title": "The headmaster",
+      "author": "Altos and Herdone",
+      "url": "https://f95zone.to/threads/the-headmaster-v0-15-2-altos-and-herdone.23470/",
+      "cover_url": "https://attachments.f95zone.to/2024/07/3883005_f95_thread_banner.png",
+      "version": "v0.16.4"
+    },
+    {
+      "title": "Thirty Days",
+      "author": "3DRComics",
+      "url": "https://f95zone.to/threads/thirty-days-v0-05-01-3drcomics.110850/",
+      "cover_url": "https://attachments.f95zone.to/2023/03/2520625_kDkahm.jpg",
+      "version": "v0.07.10"
+    },
+    {
+      "title": "Young Again",
+      "author": "Zargon_games",
+      "url": "https://f95zone.to/threads/young-again-s2-ch-5-public-zargon_games.56677/",
+      "cover_url": "https://attachments.f95zone.to/2021/06/1263615_1116721_banner_chicas2.jpg",
+      "version": "S02C06"
+    },
+    {
+      "title": "Time Heals",
+      "author": "Owl's",
+      "url": "https://f95zone.to/threads/time-heals-ch-1-part-1-owls.184127/",
+      "cover_url": "https://attachments.f95zone.to/2024/07/3870639_Frame_680720.png",
+      "version": "Ep1. Part 1"
+    },
+    {
+      "title": "Lust Bound",
+      "author": "Inceton Games",
+      "url": "https://f95zone.to/threads/lust-bound-v0-3-6-inceton-games.191388/",
+      "cover_url": "https://attachments.f95zone.to/2024/02/3343909_1706904461189.jpeg",
+      "version": "v0.3.6"
+    },
+    {
+      "title": "Eternum",
+      "author": "Caribdis",
+      "url": "https://f95zone.to/threads/eternum-v0-6-2-public-caribdis.93340/",
+      "cover_url": "https://attachments.f95zone.to/2023/10/3018543_f95zone_banner.png",
+      "version": "v0.8.0"
+    },
+    {
+      "title": "Being a DIK",
+      "author": "Dr PinkCake",
+      "url": "https://f95zone.to/threads/being-a-dik-v0-10-1-dr-pinkcake.25332/",
+      "cover_url": "https://attachments.f95zone.to/2025/03/4646544_Cover.jpg",
+      "version": "v0.11.1"
+    },
+    {
+      "title": "Summer's Gone",
+      "author": "Oceanlab",
+      "url": "https://f95zone.to/threads/summers-gone-s1-steam-dlc-oceanlab.29981/",
+      "cover_url": "https://attachments.f95zone.to/2022/11/2218083_1669465401449.png",
+      "version": "Season 1"
+    },
+    {
+      "title": "Broken Promises",
+      "author": "Light Cavalry",
+      "url": "https://f95zone.to/threads/broken-promises-v0-38-light-cavalry.86405/",
+      "cover_url": "https://attachments.f95zone.to/2024/02/3410263_Patreon_Banner_2024_Feb.png",
+      "version": "v0.38"
+    },
+    {
+      "title": "Strangers on Paper",
+      "author": "Gloomy Ghost Studio",
+      "url": "https://f95zone.to/threads/strangers-on-paper-chp-1-gloomy-ghost-studio.160994/",
+      "cover_url": "https://attachments.f95zone.to/2023/05/2666268_1684812255104.png",
+      "version": "v0.2.2"
+    },
+    {
+      "title": "Guilty Pleasure",
+      "author": "Quonix",
+      "url": "https://f95zone.to/threads/guilty-pleasure-v0-34-quonix.69735/",
+      "cover_url": "https://attachments.f95zone.to/2021/03/1106505_J88DRKs.png",
+      "version": "v0.55"
+    },
+    {
+      "title": "Jason, Coming of Age",
+      "author": "CoeurDeCochon",
+      "url": "https://f95zone.to/threads/jason-coming-of-age-v0-11-1-coeurdecochon.95537/",
+      "cover_url": "https://attachments.f95zone.to/2025/06/4946665_image.png",
+      "version": "v0.11.1"
+    },
+    {
+      "title": "Summer Heat",
+      "author": "Naughty Fox Games",
+      "url": "https://f95zone.to/threads/summer-heat-v0-5-1-naughty-fox-games.107102/",
+      "cover_url": "https://attachments.f95zone.to/2023/10/3010734_Banner_CH5_Plain.png",
+      "version": "v0.6.1"
+    },
+    {
+      "title": "Chasing Sunsets",
+      "author": "Stone Fox Studios",
+      "url": "https://f95zone.to/threads/chasing-sunsets-v1-01-stone-fox-studios.62625/",
+      "cover_url": "https://attachments.f95zone.to/2020/09/849039_chasing-sunsets_banner.jpeg",
+      "version": "v1.01"
+    },
+    {
+      "title": "Adored By The Devil",
+      "author": "Empiric",
+      "url": "https://f95zone.to/threads/adored-by-the-devil-v0-8-empiric.140107/",
+      "cover_url": "https://attachments.f95zone.to/2023/07/2790423_banner3.jpg",
+      "version": "v0.12"
+    },
+    {
+      "title": "Bindr: Kink Dating",
+      "author": "bindr",
+      "url": "https://f95zone.to/threads/bindr-kink-dating-v0-1-8-bindr.164366/",
+      "cover_url": null,
+      "version": "v0.25HF"
+    },
+    {
+      "title": "Coven",
+      "author": "Former Flame",
+      "url": "https://f95zone.to/threads/the-coven-v0-8-former-flame.71348/",
+      "cover_url": null,
+      "version": "v0.9"
+    },
+    {
+      "title": "Dreamland",
+      "author": "Dokiden",
+      "url": "https://f95zone.to/threads/dreamland-v0-2-6-dokiden.135723/",
+      "cover_url": null,
+      "version": "v0.5.0"
+    },
+    {
+      "title": "Hard to Love",
+      "author": "Qori Gaming",
+      "url": "https://f95zone.to/threads/hard-to-love-v0-21-remake-qori-gaming.107137/",
+      "cover_url": null,
+      "version": "v0.22"
+    },
+    {
+      "title": "Projekt: Passion",
+      "author": "Classy Lemon",
+      "url": "https://f95zone.to/threads/projekt-passion-v0-9-classy-lemon.119199/",
+      "cover_url": null,
+      "version": "v0.8.1"
+    },
+    {
+      "title": "University of Problems",
+      "author": "DreamNow",
+      "url": "https://f95zone.to/threads/university-of-problems-v1-3-5-christmas-extended-dreamnow.65957/",
+      "cover_url": null,
+      "version": "v1.7.0"
+    },
+    {
+      "title": "Elmwood University",
+      "author": "WickedWare",
+      "url": "https://f95zone.to/threads/elmwood-university-ep-2-wickedware.200080/",
+      "cover_url": null,
+      "version": "Episode 2"
+    },
+    {
+      "title": "Picture Perfect",
+      "author": "SuperWriter",
+      "url": "https://f95zone.to/threads/picture-perfect-v1-0-superwriter.34351/",
+      "cover_url": null,
+      "version": "v0.1"
+    },
+    {
+      "title": "MWNeus",
+      "author": "CLLGames",
+      "url": "https://f95zone.to/threads/mwneus-v0-8-cllgames.154765/",
+      "cover_url": null,
+      "version": "v0.1"
+    },
+    {
+      "title": "Carnal Contract",
+      "author": "Dotty Diaries",
+      "url": "https://f95zone.to/threads/carnal-contract-s1-v1-03-1-premium-dotty-diaries.153997",
+      "cover_url": null,
+      "version": "v0.1"
+    },
+    {
+      "title": "LustyVerse: Passion on Display",
+      "author": "Inceton Games",
+      "url": "https://f95zone.to/threads/lustyverse-passion-on-display-v1-02-inceton-games.167782",
+      "cover_url": null,
+      "version": "v0.1"
+    },
+    {
+      "title": "LustyVerse: Shackbang",
+      "author": "Inceton Games",
+      "url": "https://f95zone.to/threads/lustyverse-shackbang-final-inceton-games.150386",
+      "cover_url": null,
+      "version": "v0.1"
+    },
+    {
+      "title": "Heaven's Door",
+      "author": "AlterWorlds",
+      "url": "https://f95zone.to/threads/heavens-door-ch-2-v0-2-alterworlds.241164",
+      "cover_url": null,
+      "version": "v0.3"
+    },
+    {
+      "title": "Law School",
+      "author": "MisterMaya",
+      "url": "https://f95zone.to/threads/law-school-season-1-mistermaya.184252",
+      "cover_url": null,
+      "version": "Episode 2"
+    },
+    {
+      "title": "Growing Things Up",
+      "author": "Kinkbr",
+      "url": "https://f95zone.to/threads/growing-things-up-v0-44a-kinkbr.159310",
+      "cover_url": null,
+      "version": "v0.45b"
+    },
+    {
+      "title": "Cheerleaders",
+      "author": "Lounatick",
+      "url": "https://f95zone.to/threads/cheerleaders-s1-v1-2-1-lounatick.230461",
+      "cover_url": null,
+      "version": "v0.1"
+    },
+    {
+      "title": "Family Faring",
+      "author": "Royal Games",
+      "url": "https://f95zone.to/threads/family-faring-ep-8-su-royal-games.191038",
+      "cover_url": null,
+      "version": "Episode7"
+    },
+    {
+      "title": "I Think I Might Be a Little Bit Psycho",
+      "author": "Twisted",
+      "url": "https://f95zone.to/threads/i-think-i-might-be-a-little-bit-psycho-v0-2-0-twisted.232853",
+      "cover_url": null,
+      "version": "v0.1.2"
+    },
+    {
+      "title": "Naughty Neighbours",
+      "author": "OuterRealm3D",
+      "url": "https://f95zone.to/threads/naughty-neighbours-v0-65-outerrealm3d.155855",
+      "cover_url": null,
+      "version": "v0.55"
+    },
+    {
+      "title": "Elysium",
+      "author": "Xtudio",
+      "url": "https://f95zone.to/threads/elysium-v0-6-xtudio.250298/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "The Perfect Paradise",
+      "author": "Celestial Novel",
+      "url": "https://f95zone.to/threads/the-perfect-paradise-ch-2-celestial-novel.259026/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "My Best Deal",
+      "author": "Pirot King",
+      "url": "https://f95zone.to/threads/my-best-deal-v4-3-5-pirot-king.37164/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Love and Temptation",
+      "author": "GruBoop",
+      "url": "https://f95zone.to/threads/love-and-temptation-s2-ep-9-gruboop.147940/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "SWM: The Lurking Shadow",
+      "author": "Mortze",
+      "url": "https://f95zone.to/threads/swm-the-lurking-shadow-v2-0-mortze.46344/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Alice: A Hard Life",
+      "author": "Caylake",
+      "url": "https://f95zone.to/threads/alice-a-hard-life-ep1-v1-6-caylake.175855/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "The Entrepreneur",
+      "author": "MisterMaya",
+      "url": "https://f95zone.to/threads/the-entrepreneur-complete-edition-mistermaya.90112/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Monkey Business",
+      "author": "Lazy Monkey",
+      "url": "https://f95zone.to/threads/monkey-business-v1-0-lazy-monkey.87315/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Lusty Mother",
+      "author": "IceFury",
+      "url": "https://f95zone.to/threads/lusty-mother-v1-0-icefury.229130/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Treasure of Nadia",
+      "author": "NLT Media",
+      "url": "https://f95zone.to/threads/treasure-of-nadia-v1-0117-nlt-media.38582/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "A Reunion Beyond Desire",
+      "author": "CMStoryGames",
+      "url": "https://f95zone.to/threads/a-reunion-beyond-desire-v1-1-fix-cmstorygames.233961/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Cure My Addiction",
+      "author": "TheGary",
+      "url": "https://f95zone.to/threads/cure-my-addiction-ch-5-ep-1-c-thegary.18207/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Leann Sins: Final",
+      "author": "NimosGames",
+      "url": "https://f95zone.to/threads/leann-sins-final-nimosgames.255392/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Shale Hill Secrets",
+      "author": "Love Joint",
+      "url": "https://f95zone.to/threads/shale-hill-secrets-v0-18-9b-love-joint.78583/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "The Higher Society: Part 2",
+      "author": "XXErikXX",
+      "url": "https://f95zone.to/threads/the-higher-society-part-2-v0-1-xxerikxx.99159/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Stay Online",
+      "author": "LadyLana",
+      "url": "https://f95zone.to/threads/stay-online-v1-0-ladylana.228189/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Boxed In",
+      "author": "BadBod",
+      "url": "https://f95zone.to/threads/boxed-in-v1-0-badbod.239734/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "How to Lose One's Virginity",
+      "author": "GPoint",
+      "url": "https://f95zone.to/threads/how-to-lose-ones-virginity-v1-1fe-gpoint.196346/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Summer Crush",
+      "author": "Wet n Juicy Games",
+      "url": "https://f95zone.to/threads/summer-crush-ep-7-v0-7-9-1-wet-n-juicy-games.138512/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Because I Love Her",
+      "author": "Zoey the Typist",
+      "url": "https://f95zone.to/threads/because-i-love-her-part-2-ntr-update-zoey-the-typist.16569/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "A Long Journey",
+      "author": "Marvellous Lunatic",
+      "url": "https://f95zone.to/threads/a-long-journey-v0-9-4-marvellous-lunatic.80170/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Love, Honor, Betray",
+      "author": "Renio Studios",
+      "url": "https://f95zone.to/threads/love-honor-betray-ep-13-renio-studios.128574/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "B.E.S.T.",
+      "author": "Dolyla",
+      "url": "https://f95zone.to/threads/b-e-s-t-ep-5-1-dolyla.146279/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Luna Reloaded",
+      "author": "Frozen Synapse",
+      "url": "https://f95zone.to/threads/luna-reloaded-v0-29-frozen-synapse.182835/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Artemis",
+      "author": "Digi-B",
+      "url": "https://f95zone.to/threads/artemis-v0-6-2b-digi-b.77680/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "How to Fix the Future",
+      "author": "Mr. Moonmi",
+      "url": "https://f95zone.to/threads/how-to-fix-the-future-v0-3-2-mr-moonmi.80788/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Worlds of Wonders P2",
+      "author": "Its Danny",
+      "url": "https://f95zone.to/threads/worlds-of-wonders-p2-v0-3-2-its-danny.85358/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Imperial Chronicles",
+      "author": "Lazy Monkey",
+      "url": "https://f95zone.to/threads/imperial-chronicles-v0-11-lazy-monkey.175608/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "A Foreign World",
+      "author": "HighbornTiger",
+      "url": "https://f95zone.to/threads/a-foreign-world-ep-8-highborntiger.135123/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Selara",
+      "author": "Sacred Sage",
+      "url": "https://f95zone.to/threads/selara-update-9-sacred-sage.158622/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "The Cabin: Summer Vacation",
+      "author": "CellStudios",
+      "url": "https://f95zone.to/threads/the-cabin-summer-vacation-ep-9-cellstudios.82861/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Origin Story",
+      "author": "JDor",
+      "url": "https://f95zone.to/threads/origin-story-v0-8-2-jdor.183779/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Yesterday's Crossroads",
+      "author": "Chaquinn0",
+      "url": "https://f95zone.to/threads/yesterdays-crossroads-ch-3-v0-4-1a-chaquinn0.144318/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Summer in the City",
+      "author": "FlipDashIt",
+      "url": "https://f95zone.to/threads/summer-in-the-city-s1-v1-01-flipdashit.205361/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "The East Block",
+      "author": "BobbyBoy Productions",
+      "url": "https://f95zone.to/threads/the-east-block-v0-8-3-bobbyboy-productions.180753/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Fresh Story",
+      "author": "WetmelonPlay",
+      "url": "https://f95zone.to/threads/fresh-story-s3-v0-1-5-wetmelonplay.102447/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "New Beginnings in Japan",
+      "author": "Shikhar",
+      "url": "https://f95zone.to/threads/new-beginnings-in-japan-ch-2-v-0-8-2-shikharsfree.148613/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "My New Daughter's Lover - Reboot",
+      "author": "Derketogames",
+      "url": "https://f95zone.to/threads/my-new-daughters-lover-reboot-v0-9-vip-derketogames.167552/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Lustful Voyage - Christmas Special",
+      "author": "Scallywag Games",
+      "url": "https://f95zone.to/threads/lustful-voyage-christmas-special-scallywag-games.202591/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Inner Growth",
+      "author": "Morally Purple",
+      "url": "https://f95zone.to/threads/inner-growth-v1-9-morally-purple.43165/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Domino Beach",
+      "author": "Mr. Jet",
+      "url": "https://f95zone.to/threads/domino-beach-ep-2-fix-mr-jet.214365/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Shattered Dreams - Redemption",
+      "author": "Nebula Dreams",
+      "url": "https://f95zone.to/threads/shattered-dreams-redemption-v0-4-nebula-dreams.236294/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "The Adventurous Couple",
+      "author": "Mircom3D",
+      "url": "https://f95zone.to/threads/the-adventurous-couple-tacos-s2-p6a-mircom3d.7192/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Mommy's Boy",
+      "author": "DreamBigGames",
+      "url": "https://f95zone.to/threads/mommys-boy-v0-3-0-fixed-dreambiggames.247782/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Fake Father",
+      "author": "Netero3009",
+      "url": "https://f95zone.to/threads/fake-father-second-v0-4-full-netero3009.129741/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "The Way Love Goes",
+      "author": "Naughty Skunk Games",
+      "url": "https://f95zone.to/threads/the-way-love-goes-ch-32-naughty-skunk-games.88718/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Village Slut Transformation",
+      "author": "Eromantis",
+      "url": "https://f95zone.to/threads/village-slut-transformation-ep-10-eromantis.177954/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "The Lost Love",
+      "author": "SpeedpostX",
+      "url": "https://f95zone.to/threads/the-lost-love-ep-6-u1-speedpostx.113520/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Milfylicious",
+      "author": "Maximus",
+      "url": "https://f95zone.to/threads/milfylicious-ch-ii-v0-33-maximus.141186/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "One Twisted Fantasy",
+      "author": "Zelltin",
+      "url": "https://f95zone.to/threads/one-twisted-fantasy-v0-106-zelltin.255269/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Contagion Crisis",
+      "author": "WeLoveMonsters",
+      "url": "https://f95zone.to/threads/contagion-crisis-v0-6-0-welovemonsters.199939/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Caprice - Domina Noctis",
+      "author": "Seni Productions",
+      "url": "https://f95zone.to/threads/caprice-domina-noctis-v1-0-seni-productions.255265/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Eleria",
+      "author": "M.C. Games",
+      "url": "https://f95zone.to/threads/elleria-v1-3-3-wheel-of-fate-m-c-games.191230/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "The Viper",
+      "author": "BoboQwe",
+      "url": "https://f95zone.to/threads/the-viper-v0-4-boboqwe.235892/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "University Days",
+      "author": "Greebo",
+      "url": "https://f95zone.to/threads/university-days-s1-ep-15-greebo.154969/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Resort of Temptation",
+      "author": "Pinceton Games",
+      "url": "https://f95zone.to/threads/resort-of-temptation-v0-1-7-inceton-games-ntr.226065/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Mutant College",
+      "author": "Space Samurai Games",
+      "url": "https://f95zone.to/threads/mutant-college-v0-8-0-space-samurai-games.234103/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Darker",
+      "author": "Director Unknown",
+      "url": "https://f95zone.to/threads/darker-ch-1-part-7-director-unknown.165066/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Etlinas Principle",
+      "author": "PippoAd",
+      "url": "https://f95zone.to/threads/etlinas-principle-v0-04-0-public-pippoad.143053/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "My Sisters and Me",
+      "author": "CursedSavinkov",
+      "url": "https://f95zone.to/threads/my-sisters-and-me-ep-1-1-cursedsavinkov.198985/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "A Touch of Magic",
+      "author": "Jad",
+      "url": "https://f95zone.to/threads/a-touch-of-magic-v0-1-ch-1-remake-first-sin-jad.182184/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "The Last Star Walker",
+      "author": "Veluxa",
+      "url": "https://f95zone.to/threads/the-last-star-walker-ch-3-veluxa.216271/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Once Again",
+      "author": "Paraloop",
+      "url": "https://f95zone.to/threads/once-again-ch-1-paraloop.225025/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Hardenville",
+      "author": "JoyFi Games",
+      "url": "https://f95zone.to/threads/hardenville-v0-2-4-joyfi-games.179030/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Shards of the Past",
+      "author": "Garou24",
+      "url": "https://f95zone.to/threads/shards-of-the-past-v0-3-1-garou24.158416/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Beyond Tomorrow",
+      "author": "Dream Games",
+      "url": "https://f95zone.to/threads/beyond-tomorrow-ch-3-part-1-dream-games.161133/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Games of Domination",
+      "author": "JohnJohnsGames",
+      "url": "https://f95zone.to/threads/games-of-domination-v0-4-0-johnjohnsongames.174764/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Lost Freedom",
+      "author": "Verde",
+      "url": "https://f95zone.to/threads/lost-freedom-v0-5-verde.230438/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Zia",
+      "author": "Studio Zia",
+      "url": "https://f95zone.to/threads/zia-v0-5-studio-zia.145102/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Beach Glass",
+      "author": "Otterfly",
+      "url": "https://f95zone.to/threads/beach-glass-v0-1-1-otterfly.241591/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Blood Ties",
+      "author": "BaconLake",
+      "url": "https://f95zone.to/threads/blood-ties-v0-1-0-alpha-baconlake.252762/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "What We Left Behind",
+      "author": "Dreamscape Games",
+      "url": "https://f95zone.to/threads/what-we-left-behind-v0-0-1-dreamscape-games.259160/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Punk 2079",
+      "author": "MRX",
+      "url": "https://f95zone.to/threads/punk-2079-v0-7-mrx.240366/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Attempted Redemption",
+      "author": "The Joker",
+      "url": "https://f95zone.to/threads/attempted-redemption-ch-2-the-jokers-lair.233297/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Rave",
+      "author": "OneMC",
+      "url": "https://f95zone.to/threads/rave-ep-1-v0-1-1-onemc.255435/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Open Wounds",
+      "author": "Black Void",
+      "url": "https://f95zone.to/threads/open-wounds-v1-0a-black-void.228343/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Sin Heels",
+      "author": "Hera Novels",
+      "url": "https://f95zone.to/threads/sin-heels-ep-4-p3-v4-0-hera-novels.203681/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Elite Garden",
+      "author": "A.K. Studio",
+      "url": "https://f95zone.to/threads/elite-garden-ep-4-a-k-studio.148994/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Angel/Demon",
+      "author": "Saint",
+      "url": "https://f95zone.to/threads/angel-demon-v0-4-p2-saint.214263/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Rebounding Life",
+      "author": "SuperWriter",
+      "url": "https://f95zone.to/threads/rebounding-life-ep-4-1-superwriter.215931/",
+      "cover_url": null,
+      "version": "Haven't Played"
+    },
+    {
+      "title": "Life Together",
+      "author": "Mr. BlackEyes",
+      "url": "https://f95zone.to/threads/life-together-v0-1-mr-blackeyes.254041",
+      "cover_url": "https://attachments.f95zone.to/2025/05/4831556_Cover.jpg",
+      "version": "v0.1"
+    }
+  ]</script>
+
+  <script>
+    // Hover preview state
+    let __coverPreviewEl = null;
+    let __coverPreviewImg = null;
+    let __coverPreviewTimer = null;
+    let __coverPreviewVisible = false;
+    let __lastMouse = { x: 0, y: 0 };
+
+    function __ensureCoverPreview() {
+      if (__coverPreviewEl) return __coverPreviewEl;
+      const el = document.createElement('div');
+      el.className = 'cover-preview';
+      const img = document.createElement('img');
+      el.appendChild(img);
+      document.body.appendChild(el);
+      __coverPreviewEl = el;
+      __coverPreviewImg = img;
+      return el;
+    }
+
+    function __positionCoverPreview(x, y) {
+      if (!__coverPreviewEl) return;
+      const margin = 16;
+      const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+      const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+      // Preferred position: to the right and slightly below the cursor
+      let left = x + margin;
+      let top = y + margin;
+      const rect = __coverPreviewEl.getBoundingClientRect();
+      const pw = rect.width || 360;
+      const ph = rect.height || 200;
+      if (left + pw + margin > vw) left = x - pw - margin; // flip to left if overflow
+      if (top + ph + margin > vh) top = y - ph - margin;   // flip above if overflow
+      __coverPreviewEl.style.left = `${Math.max(8, left)}px`;
+      __coverPreviewEl.style.top = `${Math.max(8, top)}px`;
+    }
+
+    function __showCoverPreview(src, x, y) {
+      __ensureCoverPreview();
+      if (!__coverPreviewImg) return;
+      __coverPreviewImg.src = src;
+      __coverPreviewEl.style.opacity = '1';
+      __coverPreviewEl.style.transform = 'scale(1)';
+      __positionCoverPreview(x, y);
+      __coverPreviewVisible = true;
+    }
+
+    function __hideCoverPreview() {
+      if (!__coverPreviewEl) return;
+      __coverPreviewEl.style.opacity = '0';
+      __coverPreviewEl.style.transform = 'scale(.98)';
+      __coverPreviewVisible = false;
+    }
+    function hashString(s) {
+      let h = 0;
+      if (!s) return h;
+      for (let i = 0; i < s.length; i++) {
+        h = (h << 5) - h + s.charCodeAt(i);
+        h |= 0;
+      }
+      return Math.abs(h);
+    }
+
+    function placeholderCover(title) {
+      const letter = (title || '?').trim().charAt(0).toUpperCase() || '?';
+      const palettes = [
+        ['#6ea8fe', '#8e9bff'],
+        ['#22c55e', '#2dd4bf'],
+        ['#f59e0b', '#f97316'],
+        ['#ef4444', '#f43f5e'],
+        ['#14b8a6', '#06b6d4'],
+        ['#a78bfa', '#8b5cf6']
+      ];
+      const idx = hashString(title) % palettes.length;
+      const [c1, c2] = palettes[idx];
+      const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="${c1}"/>
+      <stop offset="100%" stop-color="${c2}"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="12" fill="url(#g)"/>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Segoe UI, Roboto, Helvetica, Arial" font-size="28" font-weight="700" fill="#ffffff">${letter}</text>
+  Sorry, your browser does not support inline SVG.
+  </svg>`;
+      return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+    }
+
+    function getCoverSrc(game) {
+      if (game && game.cover_url) return game.cover_url;
+      return placeholderCover(game?.title);
+    }
+
+    function loadGamesFromJson() {
+      const el = document.getElementById('games-data');
+      if (!el) return [];
+      try {
+        const txt = (el.textContent || '').trim();
+        const data = JSON.parse(txt);
+        return Array.isArray(data) ? data : [];
+      } catch (e) {
+        console.error('Failed to parse games JSON', e);
+        return [];
+      }
+    }
+
+    function renderTable(items) {
+      const tbody = document.getElementById('gamesBody');
+      tbody.innerHTML = '';
+      if (!items.length) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 3; td.className = 'empty'; td.textContent = 'No games to display';
+        tr.appendChild(td); tbody.appendChild(tr); return;
+      }
+      for (const g of items) {
+        const tr = document.createElement('tr');
+        if (g.url) tr.setAttribute('data-url', g.url);
+        tr.addEventListener('click', () => { if (g.url) window.open(g.url, '_blank', 'noopener'); });
+
+        const tdTitle = document.createElement('td');
+        tdTitle.className = 'title';
+        const img = document.createElement('img');
+        img.className = 'cover';
+        img.src = getCoverSrc(g);
+        img.alt = (g.title ? `Cover for ${g.title}` : 'Cover');
+        img.loading = 'lazy';
+
+        // Hover preview with ~0.6s delay
+        img.addEventListener('mousemove', (e) => {
+          __lastMouse.x = e.clientX; __lastMouse.y = e.clientY;
+          if (__coverPreviewVisible) __positionCoverPreview(__lastMouse.x, __lastMouse.y);
+        });
+        img.addEventListener('mouseenter', () => {
+          clearTimeout(__coverPreviewTimer);
+          __coverPreviewTimer = setTimeout(() => {
+            __showCoverPreview(img.src, __lastMouse.x, __lastMouse.y);
+          }, 600);
+        });
+        img.addEventListener('mouseleave', () => {
+          clearTimeout(__coverPreviewTimer);
+          __hideCoverPreview();
+        });
+
+        const spanTitle = document.createElement('span');
+        spanTitle.className = 'ttext';
+        spanTitle.textContent = g.title || '—';
+
+        tdTitle.appendChild(img);
+        tdTitle.appendChild(spanTitle);
+        if (g.url) {
+          const a = document.createElement('a');
+          a.className = 'ext'; a.href = g.url; a.target = '_blank'; a.rel = 'noopener'; a.title = 'Open link in a new tab';
+          a.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path><path d="M5 5h6v2H7v10h10v-4h2v6H5z"></path></svg>';
+          a.addEventListener('click', (ev) => { ev.stopPropagation(); });
+          tdTitle.appendChild(a);
+        }
+        tdTitle.setAttribute('data-label', 'Game');
+
+        const tdAuthor = document.createElement('td');
+        tdAuthor.className = 'author';
+        tdAuthor.textContent = g.author || '—';
+        tdAuthor.setAttribute('data-label', 'Author');
+
+  const tdVersion = document.createElement('td');
+  tdVersion.className = 'version';
+  const ver = document.createElement('span');
+  ver.className = 'badge';
+  ver.textContent = g.version || '—';
+  tdVersion.appendChild(ver);
+  tdVersion.setAttribute('data-label', 'Version');
+
+        tr.appendChild(tdTitle);
+        tr.appendChild(tdAuthor);
+        tr.appendChild(tdVersion);
+        tbody.appendChild(tr);
+      }
+    }
+
+    function setupSearch(allItems) {
+      const q = document.getElementById('q');
+      const visibleCount = document.getElementById('visibleCount');
+      const totalCount = document.getElementById('totalCount');
+      const update = () => {
+        const term = (q.value || '').toLowerCase().trim();
+        const filtered = term
+          ? allItems.filter(g =>
+              (g.title && g.title.toLowerCase().includes(term)) ||
+              (g.author && g.author.toLowerCase().includes(term))
+            )
+          : allItems.slice();
+        renderTable(filtered);
+        visibleCount.textContent = `${filtered.length} visible`;
+        totalCount.textContent = `${allItems.length} total`;
+      };
+      q.addEventListener('input', update);
+      update();
+    }
+
+    (function init() {
+      const games = loadGamesFromJson();
+      setupSearch(games);
+    })();
+  </script>
+</body>
+</html>
+
