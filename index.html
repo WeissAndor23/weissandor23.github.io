@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -18,93 +19,436 @@
       --border: #232848;
       --chip: #232a4f;
     }
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
     body {
       margin: 0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
       background: radial-gradient(1200px 800px at 10% -10%, #233 0%, #111 50%, #0d1020 100%), var(--bg);
       color: var(--text);
     }
-  .page { width: 80%; max-width: none; margin: 0 auto; padding: 32px 20px 56px; }
-    header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
-    .logo { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: grid; place-items: center; color: white; font-weight: 800; box-shadow: 0 8px 24px rgba(110,168,254,.35); user-select: none; }
-    h1 { font-size: 20px; margin: 0; letter-spacing: .3px; }
-    .muted { color: var(--muted); font-size: 13px; }
 
-    .panel { background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0)); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,.35); }
-    .toolbar { display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid var(--border); background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0)); }
-    .search { flex:1; background:#0e1230; border:1px solid var(--border); color:var(--text); padding:10px 12px; border-radius:10px; outline:none; }
-    .chip { background:var(--chip); border:1px solid var(--border); color:var(--muted); font-size:12px; padding:6px 10px; border-radius:999px; white-space:nowrap; }
+    .page {
+      width: 80%;
+      max-width: none;
+      margin: 0 auto;
+      padding: 32px 20px 56px;
+    }
 
-    table { width:100%; border-collapse:collapse; }
-    thead th { text-align:left; font-weight:600; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); padding:12px 14px; background:#0f1430; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:2; }
-  tbody tr { background:var(--row); border-bottom:1px solid var(--border); }
-    tbody tr:nth-child(even) { background:var(--row-alt); }
-    tbody tr[data-url] { cursor:pointer; }
-    tbody tr[data-url]:hover { background:var(--row-hover); }
-  td { padding:16px 18px; vertical-align:middle; }
-    .title { font-weight:600; color:#f3f5ff; }
-  td.title { display:flex; align-items:center; gap:16px; }
-  .title .ttext { display:inline-block; }
-  /* Horizontal cover preview: 2:1 ratio (w:h), made wider and taller */
-  .cover { width:160px; height:80px; border-radius:12px; object-fit:cover; background:#14183a; border:1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,.25); flex:0 0 160px; }
-  .cover-preview {
-    position: fixed;
-    z-index: 9999;
-    pointer-events: none;
-    padding: 6px;
-    border-radius: 12px;
-    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0));
-    border: 1px solid var(--border);
-    box-shadow: 0 20px 60px rgba(0,0,0,.5);
-    transform-origin: top left;
-    transition: opacity .12s ease, transform .12s ease;
-    opacity: 0;
-    transform: scale(.98);
-  }
-  .cover-preview img {
-    display: block;
-    /* Much larger preview: roughly 2–3x bigger, but responsive */
-    max-width: min(70vw, 1200px);
-    max-height: min(70vh, 800px);
-    width: auto;
-    height: auto;
-    border-radius: 8px;
-  }
-    .title .ext { display:inline-flex; align-items:center; gap:6px; margin-left:8px; color:var(--accent); opacity:.85; text-decoration:none; }
-    .title .ext:hover { opacity:1; }
-    .title .ext svg { width:14px; height:14px; display:inline-block; fill:currentColor; }
-    .author { color:var(--muted); }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 800;
+      box-shadow: 0 8px 24px rgba(110, 168, 254, .35);
+      user-select: none;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin: 0;
+      letter-spacing: .3px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(255, 255, 255, .03), rgba(255, 255, 255, 0));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, .35);
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255, 255, 255, .04), rgba(255, 255, 255, 0));
+    }
+
+    .search {
+      flex: 1;
+      background: #0e1230;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 10px;
+      outline: none;
+    }
+
+    .chip {
+      background: var(--chip);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead th {
+      text-align: left;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 12px 14px;
+      background: #0f1430;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    tbody tr {
+      background: var(--row);
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody tr:nth-child(even) {
+      background: var(--row-alt);
+    }
+
+    tbody tr[data-url] {
+      cursor: pointer;
+    }
+
+    tbody tr[data-url]:hover {
+      background: var(--row-hover);
+    }
+
+    td {
+      padding: 16px 18px;
+      vertical-align: middle;
+    }
+
+    .title {
+      font-weight: 600;
+      color: #f3f5ff;
+    }
+
+    td.title {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .title .ttext {
+      display: inline-block;
+    }
+
+    /* Horizontal cover preview: 2:1 ratio (w:h), made wider and taller */
+    .cover {
+      width: 160px;
+      height: 80px;
+      border-radius: 12px;
+      object-fit: cover;
+      background: #14183a;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
+      flex: 0 0 160px;
+    }
+
+    .cover-preview {
+      position: fixed;
+      z-index: 9999;
+      pointer-events: none;
+      padding: 6px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, 0));
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
+      transform-origin: top left;
+      transition: opacity .12s ease, transform .12s ease;
+      opacity: 0;
+      transform: scale(.98);
+    }
+
+    .cover-preview img {
+      display: block;
+      /* Much larger preview: roughly 2–3x bigger, but responsive */
+      max-width: min(70vw, 1200px);
+      max-height: min(70vh, 800px);
+      width: auto;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .title .ext {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 8px;
+      color: var(--accent);
+      opacity: .85;
+      text-decoration: none;
+    }
+
+    .title .ext:hover {
+      opacity: 1;
+    }
+
+    .title .ext svg {
+      width: 14px;
+      height: 14px;
+      display: inline-block;
+      fill: currentColor;
+    }
+
+    .author {
+      color: var(--muted);
+    }
+
     /* Version column cell */
-    td.version { text-align:center; }
+    td.version {
+      text-align: center;
+    }
+
     /* Pill badge for version value */
     .version .badge {
-      display:inline-block;
-      padding:6px 12px;
-      border-radius:999px;
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
       color: #ffffff;
       font-weight: 700;
       font-size: 12px;
       letter-spacing: .02em;
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: 0 6px 18px rgba(110,168,254,.25);
+      border: 1px solid rgba(255, 255, 255, .12);
+      box-shadow: 0 6px 18px rgba(110, 168, 254, .25);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
-    .empty { color:var(--muted); }
-    .footer { padding:14px 16px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:12px; }
+
+    .empty {
+      color: var(--muted);
+    }
+
+    .footer {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
 
     @media (max-width: 720px) {
-      thead { display:none; }
-      table, tbody, tr, td { display:block; width:100%; }
-      tbody tr { margin:10px 10px; border-radius:12px; overflow:hidden; }
-      td { border-bottom:1px solid var(--border); }
-      td:last-child { border-bottom:0; }
-      td[data-label]:before { content: attr(data-label); display:block; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:4px; }
+      thead {
+        display: none;
+      }
+
+      table,
+      tbody,
+      tr,
+      td {
+        display: block;
+        width: 100%;
+      }
+
+      tbody tr {
+        margin: 10px 10px;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      td {
+        border-bottom: 1px solid var(--border);
+      }
+
+      td:last-child {
+        border-bottom: 0;
+      }
+
+      td[data-label]:before {
+        content: attr(data-label);
+        display: block;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+    }
+
+    /* Category Headers */
+    .category-header td {
+      background: #1a203c;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      padding: 14px 18px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      /* Sticky header for categories too if desired, but might clash with the main header. 
+         Let's keep it scrolling for now or sticky below top header. */
+    }
+
+    /* Hall of Fame (HOF) Styling */
+    tbody tr.hof td {
+      background: linear-gradient(90deg, rgba(255, 215, 0, 0.08), rgba(255, 215, 0, 0));
+      border-top: 1px solid rgba(255, 215, 0, 0.25);
+      border-bottom: 1px solid rgba(255, 215, 0, 0.25);
+    }
+
+    tbody tr.hof:hover td {
+      background: linear-gradient(90deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0.05));
+    }
+
+    /* Gold border left indicator */
+    tbody tr.hof td:first-child {
+      border-left: 3px solid #ffd700;
+    }
+
+    /* Crown Icon */
+    .hof-icon {
+      margin-left: 8px;
+      font-size: 16px;
+      line-height: 1;
+      display: inline-block;
+      filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.6));
+      animation: float crown 3s ease-in-out infinite;
+    }
+
+    @keyframes crown {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-2px);
+      }
+    }
+
+    /* Category Headers */
+    /* Category Headers */
+    .category-header td {
+      background: #1a203c;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      padding: 14px 18px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+    }
+
+    .category-header td:hover {
+      background: #20264a;
+    }
+
+    /* Chevron icon for collapse */
+    .category-header td::after {
+      content: '';
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      width: 10px;
+      height: 10px;
+      border-right: 2px solid var(--muted);
+      border-bottom: 2px solid var(--muted);
+      transform: translateY(-50%) rotate(45deg);
+      /* Down arrow */
+      transition: transform 0.2s ease;
+    }
+
+    .category-header.collapsed td::after {
+      transform: translateY(-50%) rotate(-135deg);
+      /* Up arrow */
+    }
+
+    /* Hidden rows */
+    tr.hidden-row {
+      display: none;
+    }
+
+    /* Hall of Fame (HOF) Styling - Unified Look */
+    /* Remove individual cell styling for HOF */
+    tbody tr.hof td {
+      background: transparent;
+      border-top: 1px solid transparent;
+      border-bottom: 1px solid transparent;
+    }
+
+    /* Apply unified style to the row */
+    tbody tr.hof {
+      position: relative;
+      background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.02));
+      box-shadow: inset 3px 0 0 0 #ffd700, inset 0 1px 0 0 rgba(255, 215, 0, 0.3), inset 0 -1px 0 0 rgba(255, 215, 0, 0.3);
+    }
+
+    tbody tr.hof:hover {
+      background: linear-gradient(90deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0.05));
+    }
+
+    /* Remove the old left border approach since we use inset shadow now */
+    tbody tr.hof td:first-child {
+      border-left: none;
+    }
+
+    /* Crown Icon */
+    .hof-icon {
+      margin-left: 8px;
+      font-size: 16px;
+      line-height: 1;
+      display: inline-block;
+      filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.6));
+      animation: float crown 3s ease-in-out infinite;
+    }
+
+    @keyframes crown {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-2px);
+      }
     }
   </style>
 </head>
+
 <body>
   <div class="page">
     <header>
@@ -131,7 +475,9 @@
             </tr>
           </thead>
           <tbody id="gamesBody">
-            <tr><td colspan="3" class="empty">Loading…</td></tr>
+            <tr>
+              <td colspan="3" class="empty">Loading…</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -1161,7 +1507,77 @@
   ]</script>
 
   <script>
-    // Hover preview state
+    // --- Embedded Category Data ---
+    const CATEGORY_DATA = {
+      nagyonjohof: [
+        { "name": "Eternum", "url": "https://f95zone.to/threads/eternum-v0-6-2-public-caribdis.93340/" },
+        { "name": "Being a DIK", "url": "https://f95zone.to/threads/being-a-dik-v0-10-1-dr-pinkcake.25332/" },
+        { "name": "Summer's Gone", "url": "https://f95zone.to/threads/summers-gone-s1-steam-dlc-oceanlab.29981/" },
+        { "name": "Broken Promises", "url": "https://f95zone.to/threads/broken-promises-v0-38-light-cavalry.86405/" },
+        { "name": "Heaven's Door", "url": "https://f95zone.to/threads/heavens-door-ch-2-v0-2-alterworlds.241164" }
+      ],
+      nagyonjo: [
+        { "name": "Strangers on Paper", "url": "https://f95zone.to/threads/strangers-on-paper-chp-1-gloomy-ghost-studio.160994/" },
+        { "name": "Guilty Pleasure", "url": "https://f95zone.to/threads/guilty-pleasure-v0-34-quonix.69735/" },
+        { "name": "Jason, Coming of Age", "url": "https://f95zone.to/threads/jason-coming-of-age-v0-11-1-coeurdecochon.95537/" },
+        { "name": "Summer Heat", "url": "https://f95zone.to/threads/summer-heat-v0-5-1-naughty-fox-games.107102/" },
+        { "name": "Adored By The Devil", "url": "https://f95zone.to/threads/adored-by-the-devil-v0-8-empiric.140107/" },
+        { "name": "Bindr: Kink Dating", "url": "https://f95zone.to/threads/bindr-kink-dating-v0-1-8-bindr.164366/" },
+        { "name": "Coven", "url": "https://f95zone.to/threads/the-coven-v0-8-former-flame.71348/" },
+        { "name": "Desert Stalker", "url": "https://f95zone.to/threads/desert-stalker-v0-14d-public-zetan.68105/" },
+        { "name": "Dreamland", "url": "https://f95zone.to/threads/dreamland-v0-2-6-dokiden.135723/" },
+        { "name": "Hard to Love", "url": "https://f95zone.to/threads/hard-to-love-v0-21-remake-qori-gaming.107137/" },
+        { "name": "Projekt: Passion", "url": "https://f95zone.to/threads/projekt-passion-v0-9-classy-lemon.119199/" },
+        { "name": "University of Problems", "url": "https://f95zone.to/threads/university-of-problems-v1-3-5-christmas-extended-dreamnow.65957/" },
+        { "name": "Elmwood University", "url": "https://f95zone.to/threads/elmwood-university-ep-2-wickedware.200080/" },
+        { "name": "Law School", "url": "https://f95zone.to/threads/law-school-ep-2-mistermaya.184252/" }
+      ],
+      folytatasravar: [
+        { "name": "Please, Change My Diaper!", "url": "https://f95zone.to/threads/please-change-my-diaper-v0-40-donkle12.103904/" },
+        { "name": "Defending Lydia Collier", "url": "https://f95zone.to/threads/defending-lydia-collier-v0-15-8-white-phantom-games.33797/" },
+        { "name": "Halfway House", "url": "https://f95zone.to/threads/halfway-house-ep-10-bonus-7-8-az.33607/" },
+        { "name": "Having a HARD Time", "url": "https://f95zone.to/threads/having-a-hard-time-v0-2-3-quadruple-q.145408/" },
+        { "name": "Heart Problems", "url": "https://f95zone.to/threads/heart-problems-v0-8-final-xenorav.63437/" },
+        { "name": "Hillside", "url": "https://f95zone.to/threads/hillside-v0-14-1-darkblue.52621/" },
+        { "name": "Lost at Birth", "url": "https://f95zone.to/threads/lost-at-birth-ch-9-part-1-v19.111744/" },
+        { "name": "Personal Assistant: Blackheart Edition", "url": "https://f95zone.to/threads/personal-assistant-blackheart-edition-v0-6-blackheart-games.110616/" },
+        { "name": "Radiant", "url": "https://f95zone.to/threads/radiant-v0-5-2-rk-studios.49572/" },
+        { "name": "Taboo University", "url": "https://f95zone.to/threads/taboo-university-v0-4-17-vinovellagames.112212/" },
+        { "name": "The Grey Dream", "url": "https://f95zone.to/threads/the-grey-dream-ep-4-thegreys.125324/" },
+        { "name": "The headmaster", "url": "https://f95zone.to/threads/the-headmaster-v0-15-2-altos-and-herdone.23470/" },
+        { "name": "Thirty Days", "url": "https://f95zone.to/threads/thirty-days-v0-05-01-3drcomics.110850/" },
+        { "name": "Young Again", "url": "https://f95zone.to/threads/young-again-s2-ch-5-public-zargon_games.56677/" },
+        { "name": "Time Heals", "url": "https://f95zone.to/threads/time-heals-ch-1-part-1-owls.184127/" },
+        { "name": "Lust Bound", "url": "https://f95zone.to/threads/lust-bound-v0-3-6-inceton-games.191388/" },
+        { "name": "Growing Thing's Up", "url": "https://f95zone.to/threads/growing-things-up-v0-32b-kinkbr.159310/" },
+        { "name": "Cheerleaders", "url": "https://f95zone.to/threads/cheerleaders-v0-1-1-lounatick.230461/" },
+        { "name": "Family Faring", "url": "https://f95zone.to/threads/family-faring-ep-6-royal-games.191038/" }
+      ],
+      randomplays: [
+        { "name": "Hail Dicktator", "url": "https://f95zone.to/threads/hail-dicktator-v0-67-0-hachigames.51437/" },
+        { "name": "Move the Chains", "url": "https://f95zone.to/threads/move-the-chains-v0-2-bugfix-missfortune.167178/" },
+        { "name": "16 Years Later", "url": "https://f95zone.to/threads/16-years-later-ep-13-wetdreamwalker.90568/" },
+        { "name": "The Synthetic", "url": "https://f95zone.to/threads/the-synthetic-ep-3-side-story-carbon.181773/" },
+        { "name": "The Seven Realms", "url": "https://f95zone.to/threads/the-seven-realms-r3-v0-01-septcloud.112700/" },
+        { "name": "Westview Academy", "url": "https://f95zone.to/threads/westview-academy-v0-4-1-tako-yuh.106028/" },
+        { "name": "Where Is Love?", "url": "https://f95zone.to/threads/where-is-love-v0-1-totally-pure-games.212073/" },
+        { "name": "ATM Adventures", "url": "https://f95zone.to/threads/atm-adventures-v0-4-snubblr.151132/" },
+        { "name": "Dreams of Reality", "url": "https://f95zone.to/threads/dreams-of-reality-v0-4-8b-cenc.53556/" },
+        { "name": "FemCity", "url": "https://f95zone.to/threads/femcity-v0-6-0-kiriowo.139627/" },
+        { "name": "Intertwined", "url": "https://f95zone.to/threads/intertwined-v0-12-3-nyx.53676/" },
+        { "name": "Midnight Paradise", "url": "https://f95zone.to/threads/midnight-paradise-v0-25-elite-lewdlab.25081/" },
+        { "name": "My Dorm", "url": "https://f95zone.to/threads/my-dorm-v0-19-1-p2-ch-7-trope95.115549/" },
+        { "name": "Nudist School", "url": "https://f95zone.to/threads/nudist-school-v0-17-elsa.106380/" },
+        { "name": "Savior", "url": "https://f95zone.to/threads/savior-v0-16c-purple-fellas.40217/" },
+        { "name": "STWA: Unbroken", "url": "https://f95zone.to/threads/stwa-unbroken-pt-7-stwadev.85108/" },
+        { "name": "WVM", "url": "https://f95zone.to/threads/wvm-s2-ch-1-ep-13-b3-braindrop.35910/" },
+        { "name": "I Think I Might Be a Little Bit Psycho", "url": "https://f95zone.to/threads/i-think-i-might-be-a-little-bit-psycho-v0-1-2-twisted.232853/" },
+        { "name": "Naughty Neighbours", "url": "https://f95zone.to/threads/naughty-neighbours-v0-55-outerrealm3d.155855/" },
+        { "name": "Life Together", "url": "https://f95zone.to/threads/life-together-v0-1-mr-blackeyes.254041/" }
+      ]
+    };
+
+    // --- Hover preview state ---
     let __coverPreviewEl = null;
     let __coverPreviewImg = null;
     let __coverPreviewTimer = null;
@@ -1213,6 +1629,7 @@
       __coverPreviewEl.style.transform = 'scale(.98)';
       __coverPreviewVisible = false;
     }
+
     function hashString(s) {
       let h = 0;
       if (!s) return h;
@@ -1268,6 +1685,43 @@
       }
     }
 
+    // --- Categorization Logic ---
+    function normalize(str) {
+      return (str || '').toLowerCase().trim();
+    }
+
+    function findCategory(game) {
+      // Priority: Very Good (HOF) -> Very Good -> Good -> Average -> Unplayed
+      const gameUrl = normalize(game.url);
+      const gameTitle = normalize(game.title);
+
+      const checkList = (list) => {
+        return list.some(item => {
+          if (item.url && game.url) {
+            return normalize(item.url) === gameUrl;
+          }
+          return normalize(item.name) === gameTitle;
+        });
+      };
+
+      // 1. Very Good (HOF checks)
+      const isHOF = checkList(CATEGORY_DATA.nagyonjohof);
+      if (isHOF) return { id: 'very_good', label: 'Very Good', order: 1, isHOF: true };
+
+      // 2. Very Good (Normal)
+      if (checkList(CATEGORY_DATA.nagyonjo)) return { id: 'very_good', label: 'Very Good', order: 1, isHOF: false };
+
+      // 3. Good
+      if (checkList(CATEGORY_DATA.folytatasravar)) return { id: 'good', label: 'Good', order: 2, isHOF: false };
+
+      // 4. Average (Random Plays)
+      if (checkList(CATEGORY_DATA.randomplays)) return { id: 'average', label: 'Average', order: 3, isHOF: false };
+
+      // 5. Unplayed (Default)
+      if (typeof CATEGORY_DATA === 'object') return { id: 'unplayed', label: 'Unplayed', order: 4, isHOF: false };
+      return { id: 'unplayed', label: 'Unplayed', order: 4, isHOF: false };
+    }
+
     function renderTable(items) {
       const tbody = document.getElementById('gamesBody');
       tbody.innerHTML = '';
@@ -1277,87 +1731,173 @@
         td.colSpan = 3; td.className = 'empty'; td.textContent = 'No games to display';
         tr.appendChild(td); tbody.appendChild(tr); return;
       }
+
+      // Group items
+      const grouped = {
+        very_good: [],
+        good: [],
+        average: [],
+        unplayed: []
+      };
+
+      const categoryInfo = {
+        very_good: { label: 'Very Good', order: 1 },
+        good: { label: 'Good', order: 2 },
+        average: { label: 'Average', order: 3 },
+        unplayed: { label: 'Unplayed', order: 4 }
+      };
+
       for (const g of items) {
-        const tr = document.createElement('tr');
-        if (g.url) tr.setAttribute('data-url', g.url);
-        tr.addEventListener('click', () => { if (g.url) window.open(g.url, '_blank', 'noopener'); });
-
-        const tdTitle = document.createElement('td');
-        tdTitle.className = 'title';
-        const img = document.createElement('img');
-        img.className = 'cover';
-        img.src = getCoverSrc(g);
-        img.alt = (g.title ? `Cover for ${g.title}` : 'Cover');
-        img.loading = 'lazy';
-
-        // Hover preview with ~0.6s delay
-        img.addEventListener('mousemove', (e) => {
-          __lastMouse.x = e.clientX; __lastMouse.y = e.clientY;
-          if (__coverPreviewVisible) __positionCoverPreview(__lastMouse.x, __lastMouse.y);
-        });
-        img.addEventListener('mouseenter', () => {
-          clearTimeout(__coverPreviewTimer);
-          __coverPreviewTimer = setTimeout(() => {
-            __showCoverPreview(img.src, __lastMouse.x, __lastMouse.y);
-          }, 600);
-        });
-        img.addEventListener('mouseleave', () => {
-          clearTimeout(__coverPreviewTimer);
-          __hideCoverPreview();
-        });
-
-        const spanTitle = document.createElement('span');
-        spanTitle.className = 'ttext';
-        spanTitle.textContent = g.title || '—';
-
-        tdTitle.appendChild(img);
-        tdTitle.appendChild(spanTitle);
-        if (g.url) {
-          const a = document.createElement('a');
-          a.className = 'ext'; a.href = g.url; a.target = '_blank'; a.rel = 'noopener'; a.title = 'Open link in a new tab';
-          a.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path><path d="M5 5h6v2H7v10h10v-4h2v6H5z"></path></svg>';
-          a.addEventListener('click', (ev) => { ev.stopPropagation(); });
-          tdTitle.appendChild(a);
+        const cat = findCategory(g);
+        g._cat = cat;
+        if (grouped[cat.id]) {
+          grouped[cat.id].push(g);
+        } else {
+          grouped.unplayed.push(g);
         }
-        tdTitle.setAttribute('data-label', 'Game');
+      }
 
-        const tdAuthor = document.createElement('td');
-        tdAuthor.className = 'author';
-        tdAuthor.textContent = g.author || '—';
-        tdAuthor.setAttribute('data-label', 'Author');
+      const order = ['very_good', 'good', 'average', 'unplayed'];
 
-  const tdVersion = document.createElement('td');
-  tdVersion.className = 'version';
-  const ver = document.createElement('span');
-  ver.className = 'badge';
-  ver.textContent = g.version || '—';
-  tdVersion.appendChild(ver);
-  tdVersion.setAttribute('data-label', 'Version');
+      for (const catId of order) {
+        const gamesInCat = grouped[catId];
+        if (gamesInCat.length > 0) {
+          // Section Header
+          const trH = document.createElement('tr');
+          trH.className = 'category-header';
+          trH.setAttribute('data-target', catId);
+          trH.addEventListener('click', (e) => {
+            const h = e.currentTarget;
+            h.classList.toggle('collapsed');
+            const targetId = h.getAttribute('data-target');
+            document.querySelectorAll(`.row-${targetId}`).forEach(row => {
+              row.classList.toggle('hidden-row');
+            });
+          });
 
-        tr.appendChild(tdTitle);
-        tr.appendChild(tdAuthor);
-        tr.appendChild(tdVersion);
-        tbody.appendChild(tr);
+          const tdH = document.createElement('td');
+          tdH.colSpan = 3;
+          tdH.textContent = categoryInfo[catId].label;
+          trH.appendChild(tdH);
+          tbody.appendChild(trH);
+
+          // Rows
+          for (const g of gamesInCat) {
+            const tr = document.createElement('tr');
+            tr.className = `row-${catId}`;
+            if (g._cat.isHOF) {
+              tr.classList.add('hof');
+              tr.title = "Hall of Fame - Exceptional Game";
+            }
+            if (g.url) tr.setAttribute('data-url', g.url);
+            tr.addEventListener('click', () => { if (g.url) window.open(g.url, '_blank', 'noopener'); });
+
+            const tdTitle = document.createElement('td');
+            tdTitle.className = 'title';
+            const img = document.createElement('img');
+            img.className = 'cover';
+            img.src = getCoverSrc(g);
+            img.alt = (g.title ? `Cover for ${g.title}` : 'Cover');
+            img.loading = 'lazy';
+
+            // Hover preview
+            img.addEventListener('mousemove', (e) => {
+              __lastMouse.x = e.clientX; __lastMouse.y = e.clientY;
+              if (__coverPreviewVisible) __positionCoverPreview(__lastMouse.x, __lastMouse.y);
+            });
+            img.addEventListener('mouseenter', () => {
+              clearTimeout(__coverPreviewTimer);
+              __coverPreviewTimer = setTimeout(() => {
+                __showCoverPreview(img.src, __lastMouse.x, __lastMouse.y);
+              }, 600);
+            });
+            img.addEventListener('mouseleave', () => {
+              clearTimeout(__coverPreviewTimer);
+              __hideCoverPreview();
+            });
+
+            const spanTitle = document.createElement('span');
+            spanTitle.className = 'ttext';
+            spanTitle.textContent = g.title || '—';
+
+            // Crown for HOF
+            if (g._cat.isHOF) {
+              const crown = document.createElement('span');
+              crown.className = 'hof-icon';
+              crown.textContent = '👑';
+              spanTitle.appendChild(crown);
+            }
+
+            tdTitle.appendChild(img);
+            tdTitle.appendChild(spanTitle);
+            if (g.url) {
+              const a = document.createElement('a');
+              a.className = 'ext'; a.href = g.url; a.target = '_blank'; a.rel = 'noopener'; a.title = 'Open link in a new tab';
+              a.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path><path d="M5 5h6v2H7v10h10v-4h2v6H5z"></path></svg>';
+              a.addEventListener('click', (ev) => { ev.stopPropagation(); });
+              tdTitle.appendChild(a);
+            }
+            tdTitle.setAttribute('data-label', 'Game');
+
+            const tdAuthor = document.createElement('td');
+            tdAuthor.className = 'author';
+            tdAuthor.textContent = g.author || '—';
+            tdAuthor.setAttribute('data-label', 'Author');
+
+            const tdVersion = document.createElement('td');
+            tdVersion.className = 'version';
+            const ver = document.createElement('span');
+            ver.className = 'badge';
+            ver.textContent = g.version || '—';
+            tdVersion.appendChild(ver);
+            tdVersion.setAttribute('data-label', 'Version');
+
+            tr.appendChild(tdTitle);
+            tr.appendChild(tdAuthor);
+            tr.appendChild(tdVersion);
+            tbody.appendChild(tr);
+          }
+        }
       }
     }
 
     function setupSearch(allItems) {
       const q = document.getElementById('q');
+      const catFilter = document.getElementById('catFilter');
       const visibleCount = document.getElementById('visibleCount');
       const totalCount = document.getElementById('totalCount');
+
       const update = () => {
         const term = (q.value || '').toLowerCase().trim();
-        const filtered = term
-          ? allItems.filter(g =>
-              (g.title && g.title.toLowerCase().includes(term)) ||
-              (g.author && g.author.toLowerCase().includes(term))
-            )
-          : allItems.slice();
+        const selectedCat = catFilter ? catFilter.value : 'all';
+
+        const filtered = allItems.filter(g => {
+          // 1. Check text search
+          const matchesTerm = term
+            ? (g.title && g.title.toLowerCase().includes(term)) ||
+            (g.author && g.author.toLowerCase().includes(term))
+            : true;
+
+          if (!matchesTerm) return false;
+
+          // 2. Check category filter
+          const cat = g._cat || (typeof findCategory === 'function' ? findCategory(g) : { id: 'unplayed' });
+          g._cat = cat; // cache
+
+          if (selectedCat !== 'all' && cat.id !== selectedCat) {
+            return false;
+          }
+
+          return true;
+        });
+
         renderTable(filtered);
         visibleCount.textContent = `${filtered.length} visible`;
         totalCount.textContent = `${allItems.length} total`;
       };
+
       q.addEventListener('input', update);
+      if (catFilter) catFilter.addEventListener('change', update);
       update();
     }
 
@@ -1367,5 +1907,5 @@
     })();
   </script>
 </body>
-</html>
 
+</html>
