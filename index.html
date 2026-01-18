@@ -149,8 +149,21 @@
     }
 
     td {
-      padding: 16px 18px;
+      padding: 0;
       vertical-align: middle;
+      height: 1px;
+      /* Ensure height 100% works in children */
+    }
+
+    /* Anchor wrapper styles */
+    .cell-link {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      padding: 16px 18px;
+      text-decoration: none;
+      color: inherit;
     }
 
     .title {
@@ -158,9 +171,8 @@
       color: #f3f5ff;
     }
 
-    td.title {
-      display: flex;
-      align-items: center;
+    /* Title cell specific layout */
+    .cell-link.title-link {
       gap: 16px;
     }
 
@@ -233,6 +245,10 @@
     /* Version column cell */
     td.version {
       text-align: center;
+    }
+
+    .cell-link.version-link {
+      justify-content: center;
     }
 
     /* Pill badge for version value */
@@ -1668,7 +1684,11 @@
     }
 
     function getCoverSrc(game) {
-      if (game && game.cover_url) return game.cover_url;
+      if (game && game.cover_url) {
+        if (game.cover_url.startsWith('http')) return game.cover_url;
+        // Local file support: assumes file is in "covers/" folder
+        return 'covers/' + game.cover_url;
+      }
       return placeholderCover(game?.title);
     }
 
@@ -1790,10 +1810,31 @@
               tr.title = "Hall of Fame - Exceptional Game";
             }
             if (g.url) tr.setAttribute('data-url', g.url);
-            tr.addEventListener('click', () => { if (g.url) window.open(g.url, '_blank', 'noopener'); });
 
+            // Generic wrapper creator
+            const createWrapper = (className) => {
+              if (g.url) {
+                const a = document.createElement('a');
+                a.className = 'cell-link ' + (className || '');
+                a.href = g.url;
+                a.target = '_blank';
+                a.rel = 'noopener';
+                return a;
+              } else {
+                const div = document.createElement('div');
+                div.className = 'cell-link ' + (className || '');
+                return div;
+              }
+            };
+
+
+
+            // 1. Title Cell
             const tdTitle = document.createElement('td');
             tdTitle.className = 'title';
+            tdTitle.setAttribute('data-label', 'Game');
+            const wrapTitle = createWrapper('title-link');
+
             const img = document.createElement('img');
             img.className = 'cover';
             img.src = getCoverSrc(g);
@@ -1828,33 +1869,44 @@
               spanTitle.appendChild(crown);
             }
 
-            tdTitle.appendChild(img);
-            tdTitle.appendChild(spanTitle);
-            if (g.url) {
-              const a = document.createElement('a');
-              a.className = 'ext'; a.href = g.url; a.target = '_blank'; a.rel = 'noopener'; a.title = 'Open link in a new tab';
-              a.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path><path d="M5 5h6v2H7v10h10v-4h2v6H5z"></path></svg>';
-              a.addEventListener('click', (ev) => { ev.stopPropagation(); });
-              tdTitle.appendChild(a);
-            }
-            tdTitle.setAttribute('data-label', 'Game');
+            // Append elements to wrapper
+            wrapTitle.appendChild(img);
+            wrapTitle.appendChild(spanTitle);
 
+            // External icon 
+            if (g.url) {
+              const spanIcon = document.createElement('span');
+              spanIcon.className = 'ext';
+              spanIcon.title = 'Open link in a new tab';
+              spanIcon.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path><path d="M5 5h6v2H7v10h10v-4h2v6H5z"></path></svg>';
+              wrapTitle.appendChild(spanIcon);
+            }
+
+            tdTitle.appendChild(wrapTitle);
+            tr.appendChild(tdTitle);
+
+            // 2. Author Cell
             const tdAuthor = document.createElement('td');
             tdAuthor.className = 'author';
-            tdAuthor.textContent = g.author || '—';
             tdAuthor.setAttribute('data-label', 'Author');
+            const wrapAuthor = createWrapper();
+            wrapAuthor.textContent = g.author || '—';
+            tdAuthor.appendChild(wrapAuthor);
+            tr.appendChild(tdAuthor);
 
+            // 3. Version Cell
             const tdVersion = document.createElement('td');
             tdVersion.className = 'version';
+            tdVersion.setAttribute('data-label', 'Version');
+            const wrapVersion = createWrapper('version-link');
             const ver = document.createElement('span');
             ver.className = 'badge';
             ver.textContent = g.version || '—';
-            tdVersion.appendChild(ver);
-            tdVersion.setAttribute('data-label', 'Version');
-
-            tr.appendChild(tdTitle);
-            tr.appendChild(tdAuthor);
+            wrapVersion.appendChild(ver);
+            tdVersion.appendChild(wrapVersion);
             tr.appendChild(tdVersion);
+
+
             tbody.appendChild(tr);
           }
         }
